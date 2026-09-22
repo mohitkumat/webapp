@@ -11,11 +11,11 @@ docs/           PRD, ADRs, runbooks
 ```
 
 ## Status
-Phase B complete — frontend is scaffolded, tested, and builds clean.
+Phase C complete — Go API scaffolded, tested against real Postgres.
 
 - [x] A. Repo foundation
 - [x] B. Frontend (Vite + React + TS)
-- [ ] C. Backend (Go API + Postgres)
+- [x] C. Backend (Go API + Postgres)
 - [ ] D. Containers (Docker + Compose)
 - [ ] E. CI (GitHub Actions)
 - [ ] F. Observability (logs, traces, metrics)
@@ -23,7 +23,7 @@ Phase B complete — frontend is scaffolded, tested, and builds clean.
 
 ## Setup
 
-### Frontend (`apps/web`) — available now
+### Frontend (`apps/web`)
 ```bash
 cd apps/web
 npm install
@@ -35,8 +35,16 @@ npm run lint    # ESLint check
 The home page links to `/health`, which calls the API's `/health` endpoint and shows
 loading / success / error states — a live example to follow for new pages.
 
-### Backend (`apps/api`) — lands in Phase C
-Not scaffolded yet. Placeholder folder only.
+### Backend (`apps/api`)
+Requires a local Postgres reachable at `DATABASE_URL` (see `apps/api/.env.example`).
+```bash
+cd apps/api
+go run ./cmd/api    # starts at http://127.0.0.1:8080, auto-applies migrations
+go test ./... -v    # runs against a real local Postgres
+```
+See `apps/api/README.md` for endpoints, structure, and a note on the dependency
+substitution made for this sandbox (`lib/pq` instead of `pgx`, a hand-rolled
+migration runner instead of `golang-migrate`).
 
 ### Full stack — lands in Phase D
 ```bash
