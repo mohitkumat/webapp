@@ -1,4 +1,6 @@
 import { Routes, Route, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { analytics } from "./lib/analytics";
 
 function HomePage() {
   return (
@@ -16,18 +18,25 @@ function HealthPage() {
   return <HealthCheck />;
 }
 
-import { useEffect, useState } from "react";
-
 type Status = "loading" | "ok" | "error";
 
 function HealthCheck() {
   const [status, setStatus] = useState<Status>("loading");
 
   useEffect(() => {
+    analytics.track("health_check_viewed");
+
     const apiUrl = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8080";
     fetch(`${apiUrl}/health`)
-      .then((res) => (res.ok ? setStatus("ok") : setStatus("error")))
-      .catch(() => setStatus("error"));
+      .then((res) => {
+        const next = res.ok ? "ok" : "error";
+        setStatus(next);
+        analytics.track("health_check_result", { status: next });
+      })
+      .catch(() => {
+        setStatus("error");
+        analytics.track("health_check_result", { status: "error" });
+      });
   }, []);
 
   if (status === "loading") return <p role="status">Checking API…</p>;
