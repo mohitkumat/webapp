@@ -1,0 +1,15 @@
+{
+  "name": "project-template",
+  "private": true,
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=20 <21",
+    "pnpm": ">=9"
+  },
+  "scripts": {
+    "dev": "echo 'run: docker compose up' && exit 0",
+    "lint": "pnpm -r --if-present run lint",
+    "test": "pnpm -r --if-present run test",
+    "build": "pnpm -r --if-present run build"
+  }
+}
