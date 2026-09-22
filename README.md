@@ -1,4 +1,4 @@
-# Project Template
+# Web APP Project Template
 
 Quick-start monorepo: React + TypeScript frontend, Go backend, Postgres, containerized.
 
@@ -11,15 +11,16 @@ docs/           PRD, ADRs, runbooks
 ```
 
 ## Status
-Phase E complete — CI runs lint, test, and build for both apps on every PR.
+Template complete — Phases A through F built and verified; Phase G folded in
+(PRD template + both ADRs live in `docs/`).
 
 - [x] A. Repo foundation
 - [x] B. Frontend (Vite + React + TS)
 - [x] C. Backend (Go API + Postgres)
 - [x] D. Containers (Docker + Compose)
 - [x] E. CI (GitHub Actions)
-- [ ] F. Observability (logs, traces, metrics)
-- [ ] G. Docs (PRD/ADR templates)
+- [x] F. Observability (logs, traces, metrics)
+- [x] G. Docs (PRD/ADR templates — see `docs/`)
 
 **Note on Phase D verification:** this sandbox has no Docker daemon and no
 access to Docker Hub, so the Dockerfiles/compose file below are hand-verified
@@ -90,10 +91,31 @@ hand, in order — all pass. The one thing not verified here is the GitHub
 Actions runner environment itself (service container startup, caching
 behavior) — push a PR and confirm the checks actually appear.
 
+### Observability
+- **Structured logs** — every API request logs one JSON line (`request_id`,
+  `method`, `path`, `status`, `duration_ms`) via `log/slog`.
+- **Request correlation ("tracing")** — every request gets an `X-Request-Id`
+  (reused if the caller already sent one). Grep any deployment's logs for one
+  ID to see that request's full path. See `docs/ADR-002-observability.md` for
+  why this is stdlib-based instead of full OpenTelemetry.
+- **Metrics** — `GET /metrics` on the API serves Prometheus text format
+  (`http_requests_total`, `http_requests_4xx_total`, `http_requests_5xx_total`)
+  — scrapeable by a real Prometheus/Grafana Agent even though it's hand-rolled.
+- **Frontend analytics** — `apps/web/src/lib/analytics.ts` is a
+  provider-agnostic `track`/`identify` hook, console-logging by default.
+  Swap the implementation for PostHog/Plausible later without touching call
+  sites.
+
 ## Tool versions
 Pinned in `.tool-versions`. After installing tools, run
 `bash scripts/record-versions.sh > workstation-versions.txt` and commit the result.
 
+### Docs
+- `docs/PRD-template.md` — fill out at project kickoff, before writing code.
+- `docs/ADR-001-backend-language.md` — why Go over Node.js.
+- `docs/ADR-002-observability.md` — why stdlib observability over OTel/Prometheus client.
+- `docs/branch-protection.md` — how to wire CI to actually block merges.
+
 ## Contributing
 - One feature per branch: `feature/short-description`
-- PRs must pass lint + test + build (enforced by CI once Phase E lands)
+- PRs must pass lint + test + build — enforced by CI (`ci-ok` check)
