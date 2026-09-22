@@ -22,7 +22,7 @@ services:
       HOST: "0.0.0.0"
       PORT: "8080"
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/appdb?sslmode=disable
-      ALLOWED_ORIGIN: http://127.0.0.1:3000
+      ALLOWED_ORIGIN: http://127.0.0.1:3000,http://localhost:3000
     ports:
       - "127.0.0.1:8080:8080"
     depends_on:
