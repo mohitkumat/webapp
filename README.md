@@ -11,19 +11,35 @@ docs/           PRD, ADRs, runbooks
 ```
 
 ## Status
-This is Phase A of the build plan — workspace skeleton only.
+Phase B complete — frontend is scaffolded, tested, and builds clean.
 
 - [x] A. Repo foundation
-- [ ] B. Frontend (Vite + React + TS)
+- [x] B. Frontend (Vite + React + TS)
 - [ ] C. Backend (Go API + Postgres)
 - [ ] D. Containers (Docker + Compose)
 - [ ] E. CI (GitHub Actions)
 - [ ] F. Observability (logs, traces, metrics)
 - [ ] G. Docs (PRD/ADR templates)
 
-## Setup (once later phases land)
+## Setup
+
+### Frontend (`apps/web`) — available now
 ```bash
-pnpm install        # installs web workspace deps
+cd apps/web
+npm install
+npm run dev     # starts at http://127.0.0.1:3000
+npm test        # runs the sample test suite
+npm run build   # production build
+npm run lint    # ESLint check
+```
+The home page links to `/health`, which calls the API's `/health` endpoint and shows
+loading / success / error states — a live example to follow for new pages.
+
+### Backend (`apps/api`) — lands in Phase C
+Not scaffolded yet. Placeholder folder only.
+
+### Full stack — lands in Phase D
+```bash
 docker compose up   # starts web + api + postgres locally
 ```
 
