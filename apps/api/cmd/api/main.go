@@ -8,6 +8,7 @@ import (
 	"api/internal/config"
 	"api/internal/db"
 	"api/internal/handlers"
+	"api/internal/middleware"
 )
 
 func main() {
@@ -29,8 +30,8 @@ func main() {
 	mux.HandleFunc("POST /items", handlers.CreateItem(conn))
 
 	srv := &http.Server{
-		Addr:         "127.0.0.1:" + cfg.Port,
-		Handler:      handlers.CORS(cfg.AllowedOrigins, mux),
+		Addr:         cfg.Host + ":" + cfg.Port,
+		Handler:      middleware.CORS(cfg.AllowedOrigins, mux),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}

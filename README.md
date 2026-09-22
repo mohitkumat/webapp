@@ -11,15 +11,21 @@ docs/           PRD, ADRs, runbooks
 ```
 
 ## Status
-Phase C complete — Go API scaffolded, tested against real Postgres.
+Phase D complete — full stack runs with one command via Docker Compose.
 
 - [x] A. Repo foundation
 - [x] B. Frontend (Vite + React + TS)
 - [x] C. Backend (Go API + Postgres)
-- [ ] D. Containers (Docker + Compose)
+- [x] D. Containers (Docker + Compose)
 - [ ] E. CI (GitHub Actions)
 - [ ] F. Observability (logs, traces, metrics)
 - [ ] G. Docs (PRD/ADR templates)
+
+**Note on Phase D verification:** this sandbox has no Docker daemon and no
+access to Docker Hub, so the Dockerfiles/compose file below are hand-verified
+(YAML syntax checked, image/base choices double-checked) but not run
+end-to-end here. Run `docker compose up --build` on your machine as the real
+check, and flag anything that doesn't come up clean.
 
 ## Setup
 
@@ -46,10 +52,26 @@ See `apps/api/README.md` for endpoints, structure, and a note on the dependency
 substitution made for this sandbox (`lib/pq` instead of `pgx`, a hand-rolled
 migration runner instead of `golang-migrate`).
 
-### Full stack — lands in Phase D
+### Full stack (Docker Compose)
 ```bash
-docker compose up   # starts web + api + postgres locally
+docker compose up --build
 ```
+- Web: http://127.0.0.1:3000
+- API: http://127.0.0.1:8080
+- Postgres: 127.0.0.1:5432 (user/pass `postgres`, db `appdb`)
+
+All ports are published to `127.0.0.1` only — nothing is reachable from other
+machines on your network. The API runs migrations automatically on startup.
+
+**CORS:** the API only allows requests from `ALLOWED_ORIGIN` (defaults to
+`http://127.0.0.1:3000`, the web app's origin). Change it via env var if you
+run the web app somewhere else.
+
+**Container networking note:** the API binds to `127.0.0.1` by default for
+bare-metal `go run` (loopback-only). Inside the container it's overridden to
+`HOST=0.0.0.0` via compose — otherwise Docker's published port wouldn't reach
+it. The 127.0.0.1-only restriction is instead enforced by compose's
+`"127.0.0.1:8080:8080"` port mapping on the host side.
 
 ## Tool versions
 Pinned in `.tool-versions`. After installing tools, run
