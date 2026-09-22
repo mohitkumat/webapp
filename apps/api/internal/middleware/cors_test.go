@@ -15,7 +15,7 @@ func okHandler() http.Handler {
 }
 
 func TestCORS_AllowedOrigin_SetsHeaders(t *testing.T) {
-	h := middleware.CORS([]string{"http://127.0.0.1:3000"}, okHandler())
+	h := middleware.CORS("http://127.0.0.1:3000", okHandler())
 
 	req := httptest.NewRequest(http.MethodGet, "/items", nil)
 	req.Header.Set("Origin", "http://127.0.0.1:3000")
@@ -32,7 +32,7 @@ func TestCORS_AllowedOrigin_SetsHeaders(t *testing.T) {
 }
 
 func TestCORS_DisallowedOrigin_OmitsHeaders(t *testing.T) {
-	h := middleware.CORS([]string{"http://127.0.0.1:3000"}, okHandler())
+	h := middleware.CORS("http://127.0.0.1:3000", okHandler())
 
 	req := httptest.NewRequest(http.MethodGet, "/items", nil)
 	req.Header.Set("Origin", "http://evil.example.com")
@@ -48,7 +48,7 @@ func TestCORS_DisallowedOrigin_OmitsHeaders(t *testing.T) {
 func TestCORS_Preflight_ReturnsNoContentWithoutReachingHandler(t *testing.T) {
 	reached := false
 	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { reached = true })
-	h := middleware.CORS([]string{"http://127.0.0.1:3000"}, next)
+	h := middleware.CORS("http://127.0.0.1:3000", next)
 
 	req := httptest.NewRequest(http.MethodOptions, "/items", nil)
 	req.Header.Set("Origin", "http://127.0.0.1:3000")
