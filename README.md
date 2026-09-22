@@ -11,13 +11,13 @@ docs/           PRD, ADRs, runbooks
 ```
 
 ## Status
-Phase D complete — full stack runs with one command via Docker Compose.
+Phase E complete — CI runs lint, test, and build for both apps on every PR.
 
 - [x] A. Repo foundation
 - [x] B. Frontend (Vite + React + TS)
 - [x] C. Backend (Go API + Postgres)
 - [x] D. Containers (Docker + Compose)
-- [ ] E. CI (GitHub Actions)
+- [x] E. CI (GitHub Actions)
 - [ ] F. Observability (logs, traces, metrics)
 - [ ] G. Docs (PRD/ADR templates)
 
@@ -72,6 +72,23 @@ bare-metal `go run` (loopback-only). Inside the container it's overridden to
 `HOST=0.0.0.0` via compose — otherwise Docker's published port wouldn't reach
 it. The 127.0.0.1-only restriction is instead enforced by compose's
 `"127.0.0.1:8080:8080"` port mapping on the host side.
+
+### CI (GitHub Actions)
+Every push/PR to `main` runs two jobs in parallel:
+- **web**: `npm ci` → lint → test → build
+- **api**: gofmt check → `go vet` → build → test (against a real Postgres
+  service container spun up by the workflow)
+
+A third job, **ci-ok**, only passes once both do — point branch protection at
+that one job (see `docs/branch-protection.md`) so future jobs don't require
+re-touching repo settings.
+
+**Verification note:** this sandbox has no Docker, so I couldn't run the
+workflow through `act`. Instead I ran every command the workflow runs
+(`npm ci`, lint, test, build; `gofmt`, `go vet`, `go build`, `go test`) by
+hand, in order — all pass. The one thing not verified here is the GitHub
+Actions runner environment itself (service container startup, caching
+behavior) — push a PR and confirm the checks actually appear.
 
 ## Tool versions
 Pinned in `.tool-versions`. After installing tools, run
