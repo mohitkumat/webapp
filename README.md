@@ -47,7 +47,7 @@ Requires a local Postgres reachable at `DATABASE_URL` (see `apps/api/.env.exampl
 ```bash
 cd apps/api
 go run ./cmd/api    # starts at http://127.0.0.1:8080, auto-applies migrations
-go test ./... -v    # runs against a real local Postgres
+go test -p 1 ./... -v   # real local Postgres; -p 1 because test packages share one DB
 ```
 See `apps/api/README.md` for endpoints, structure, and a note on the dependency
 substitution made for this sandbox (`lib/pq` instead of `pgx`, a hand-rolled

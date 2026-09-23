@@ -1,6 +1,16 @@
+os: Darwin 25.6.0 arm64
 git --version: git version 2.50.1 (Apple Git-155)
-node --version: v22.13.0
-pnpm --version: 12.5.1
+gh --version: gh version 2.101.0 (2026-09-15)
+node --version: v24.21.0
+pnpm --version: 12.6.0
 go version: go version go1.22.5 darwin/arm64
-docker --version: Docker version 29.7.2, build a7dcaa6
-docker compose version: Docker Compose version v5.4.0
+python3 --version: Python 3.12.1
+uv --version: uv 0.12.17 (635500036 2026-09-18 aarch64-apple-darwin)
+docker --version: Docker version 29.8.0, build 88096ef
+docker compose version: Docker Compose version v5.5.1
+claude --version: 2.1.280 (Claude Code)
+codex --version: codex-cli 0.156.1
+curl --version: curl 8.7.1 (x86_64-apple-darwin25.0) libcurl/8.7.1 (SecureTransport) LibreSSL/3.3.6 zlib/1.2.12 nghttp2/1.68.1
+jq --version: jq-1.7.1-apple
+openssl version: OpenSSL 3.6.4 25 Aug 2026 (Library: OpenSSL 3.6.4 25 Aug 2026)
+go (via go.mod toolchain): go version go1.27.1 darwin/arm64

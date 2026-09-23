@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.1.0",
   "engines": {
-    "node": ">=20 <21",
-    "pnpm": ">=9"
+    "node": ">=24 <25",
+    "pnpm": ">=12"
   },
   "scripts": {
     "dev": "echo 'run: docker compose up' && exit 0",
