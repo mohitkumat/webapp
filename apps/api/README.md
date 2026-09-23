@@ -5,7 +5,7 @@ Go backend — stdlib `net/http` (Go 1.22 method-based routing), `database/sql` 
 migration tool needed).
 
 ## Requires
-- Go 1.22+
+- Go 1.27.1 (pinned in `go.mod`; older Go 1.21+ toolchains auto-download it)
 - A local Postgres reachable at `DATABASE_URL` (see `.env.example`)
 
 ## Run
@@ -18,7 +18,7 @@ automatically on startup.
 
 ## Test
 ```bash
-go test ./... -v
+go test -p 1 ./... -v   # -p 1: db and handlers packages share one test database
 ```
 Tests run against a real local Postgres (`TEST_DATABASE_URL` env var to override,
 defaults to the same DB as `DATABASE_URL`). They reset and re-migrate the schema

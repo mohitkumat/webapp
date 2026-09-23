@@ -83,7 +83,6 @@ Observability: X-Request-Id propagated browser → API → DB → worker → stu
 - No auth, account scope, or RLS; `items` is global.
 - No Redis, worker, outbox/inbox, provider stub, evidence store, or AI workflow.
 - CI lacks OpenAPI validation and JSONL submission validation.
-- Go version drift: `.tool-versions` 1.23.2 vs CI/Dockerfile 1.22.
 - `apps/web` uses npm + `package-lock.json` inside a pnpm workspace; `tsconfig.tsbuildinfo` is committed.
 - Compose file is at repo root, not `deploy/compose.yaml`; no `tests/` or `docs/day-NN/` dirs yet.
 
@@ -105,6 +104,6 @@ Observability: X-Request-Id propagated browser → API → DB → worker → stu
 ```bash
 docker compose up --build                 # full stack: web :3000, api :8080, postgres :5432
 cd apps/web && npm run lint && npm test && npm run build
-cd apps/api && gofmt -l . && go vet ./... && go test ./...   # needs local Postgres
+cd apps/api && gofmt -l . && go vet ./... && go test -p 1 ./...   # needs local Postgres; -p 1: packages share one DB
 bash scripts/record-versions.sh > workstation-versions.txt
 ```
