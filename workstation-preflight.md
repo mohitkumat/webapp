@@ -1,8 +1,8 @@
 # Workstation preflight
 
 - **Date:** 2026-09-23
-- **Source revision:** `b9f2680` (plus uncommitted preflight changes listed at the end)
-- **Result:** Checks 1–8 **pass**. Check 9 is pending the CI result on the `day-0-preflight` PR (recorded below once it finishes).
+- **Source revision:** `92c9e12` on branch `day-0-preflight` (PR #1)
+- **Result:** **PASS.** All 9 checks pass. The open items at the end don't block the gate.
 
 ## Pass criteria
 
@@ -138,7 +138,7 @@ $ grep -nE 'https?://' docker-compose.yaml apps/api/internal/config/config.go ap
 ```
 Inside Compose the API reaches Postgres at `postgres:5432` over the private Compose network.
 
-## 9. GitHub repo, test PR, green CI: pending (see the CI result below)
+## 9. GitHub repo, test PR, green CI: pass
 ```
 $ gh repo view   → paavik/webapp, PRIVATE, default branch main
                    (git remote still says git@github.com:mohitkumat/webapp.git, so it redirects)
@@ -155,6 +155,15 @@ health_test.go:13: run migrations: create schema_migrations table: pq: duplicate
 - *Observed:* `internal/db/migrate_test.go:30` and `internal/handlers/testhelpers_test.go:26` both `DROP TABLE … items, schema_migrations` and re-migrate **the same database**. `go test ./...` runs packages in parallel.
 - *Inferred:* the two packages race. The errors match exactly: one package drops the table the other just created, and two `CREATE TABLE IF NOT EXISTS` run at the same moment. The commit that failed changed no Go code, so this is a flaky test rather than a regression.
 - *Not reproduced locally:* 0 failures in 35 parallel runs on this 10-core machine. The race depends on timing.
+
+**Result on the test PR:** https://github.com/paavik/webapp/pull/1, run `35903455290`:
+```
+web (lint, test, build)  pass  24s    setup-node: "Attempting to download 24.21.0..."
+api (vet, test, build)   pass  1m13s  setup-go: "Successfully set up Go version 1.27.1"
+  ok api/internal/db · ok api/internal/handlers · ok api/internal/middleware · ok api/internal/observability
+CI OK                    pass  4s
+```
+The workflow has no deploy step, calls no hosted model and uses no runtime secrets. The only credentials are the synthetic Postgres ones for the service container.
 
 Fix (owner decision): run Go tests with packages in series. CI now runs `go test -p 1 ./... -v`, and both READMEs and CLAUDE.md say the same. Trade-off: the tests stay coupled through one shared database and rely on a flag rather than being isolated. The alternative, a database per package, stays open if the suite grows.
 
